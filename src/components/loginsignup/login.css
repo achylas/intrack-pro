@@ -1,0 +1,163 @@
+:root {
+    --primary-color: #0a5866;
+    --secondary-color: #13bbb5;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+    margin-top: 200px;
+    width: 600px;
+    background-color: aliceblue;
+    padding: 30px;
+    border-radius: 10px;
+    position: relative; /* Allows child elements to be positioned within */
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.text {
+    color: var(--primary-color);
+    font-size: 40px;
+    font-weight: 800;
+}
+
+.underline {
+    width: 81px;
+    height: 6px;
+    background: var(--primary-color);
+    border-radius: 9px;
+}
+
+.inputs {
+    margin-top: 55px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    margin: auto;
+    width: 480px;
+    height: 50px;
+    background: #eaeaea;
+    border-radius: 6px;
+    position: relative;
+}
+
+.input input {
+    height: 50px;
+    width: 400px;
+    background: transparent;
+    border: none;
+    color: #797979;
+    font-size: 19px;
+    padding-left: 30px; /* Space for the icon */
+    outline: none;
+}
+
+.input .input-icon {
+    position: absolute;
+    left: 10px;
+    font-size: 20px;
+    color: #797979;
+}
+
+.input select {
+    height: 50px;
+    width: 440px;
+    background: transparent;
+    border: none;
+    color: #797979;
+    font-size: 19px;
+    outline: none;
+    appearance: none;
+    padding: 0 10px;
+    cursor: pointer;
+}
+
+.input::after {
+    content: '▼';
+    font-size: 16px;
+    color: #797979;
+    position: absolute;
+    right: 15px;
+    pointer-events: none;
+}
+
+.forgotpassword {
+    margin-top: 27px;
+    color: #797979;
+    font-size: 18px;
+    text-align: center;
+}
+
+.forgotpassword span {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+.submit-container {
+    display: flex;
+    justify-content: center;
+    margin: 15px auto;
+}
+
+.submit {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 220px;
+    height: 59px;
+    color: #fff;
+    background: var(--secondary-color);
+    font-size: 19px;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit:hover {
+    background: var(--primary-color);
+}
+
+.error {
+    color: red;
+    font-size: 16px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* Switch button */
+.switch-container {
+    position: absolute; /* Absolute positioning within .container */
+    bottom: 20px;
+    right: 20px;
+}
+
+.switch-btn {
+    background-color: var(--secondary-color);
+    color: #fff;
+    border: none;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+}
+
+.switch-btn:hover {
+    background-color: var(--primary-color);
+}
