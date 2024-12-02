@@ -9,7 +9,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />  {/* This should render the Login component */}
+        <Route path="/" element={<StudentDashboard />} />  {/* This should render the Login component */}
         <Route path="/student-dashboard" element={<StudentDashboard />} />
         <Route path="/advisor-dashboard" element={<AdvDashboard />} />
         <Route path="/admin-dashboard" element={<AdminDashboard />} />

@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, doc, setDoc, getDoc } from "firebase/firestore"; 
+import { getFirestore } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth"; 
 
 const firebaseConfig = {
@@ -12,10 +12,10 @@ const firebaseConfig = {
   measurementId: "G-LYTTPBRQ7Q"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
+const db = getFirestore(app);
 
-export { auth, firestore, collection, doc, setDoc, getDoc };
-
+// Export auth, firestore, and db
+export { db, auth, firestore };
