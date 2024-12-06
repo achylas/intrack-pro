@@ -1,0 +1,89 @@
+/* Layout container */
+.wholepage {
+  display: flex; /* Ensures sidebar and form-content are side-by-side */
+  height: 100vh; /* Makes the container take full viewport height */
+  overflow: hidden; /* Prevents unnecessary scrolling */
+}
+
+/* Sidebar styles */
+.sidebar {
+  flex: 0 0 250px; /* Fixed width for the sidebar */
+  background-color: navy;
+  color: white;
+  height: 100%; /* Full height */
+  overflow-y: auto; /* Sidebar becomes scrollable if content overflows */
+}
+
+/* Form container */
+.form-container {
+  flex: 1; /* Form container takes up the remaining width */
+  max-width: none; /* Prevents restricting the width */
+  padding: 20px;
+  background: #f9f9f9;
+  overflow-y: auto; /* Form content becomes scrollable if it overflows */
+  height: 95%; /* Full height */
+  box-sizing: border-box; /* Ensures padding doesn't affect the layout */
+}
+
+/* Heading styles */
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form grid layout */
+form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Two-column layout */
+  gap: 10px; /* Adds space between form fields */
+  max-width: 80%; /* Reduces the overall width of the form */
+  margin: 0 auto; /* Centers the form in the available space */
+}
+
+/* Labels */
+label {
+  margin-bottom: 1px;
+  font-weight: bold;
+  grid-column: span 2; /* Default: labels span the full width */
+}
+
+/* Inputs and select fields */
+input,
+select {
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 90%; /* Adjust width of the input fields */
+}
+
+/* File inputs */
+input[type="file"] {
+  padding: 0;
+  width: 80%; /* Adjust width of file input fields */
+}
+
+/* Submit button */
+.buttonCont {
+  display: flex;             /* Enables Flexbox */
+  justify-content: center;   /* Horizontally centers the content */
+  align-items: center;       /* Vertically centers the content (if needed) */
+  width: 100%;               /* Ensures the container takes the full width */
+  margin-top: 20px; 
+  grid-column: span 2;       /* Ensures the button spans full width */
+}
+
+button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+button:hover {
+  background-color: #0056b3;
+}

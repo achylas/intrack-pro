@@ -1,14 +1,11 @@
+// StudentDashboard.jsx
 import React, { useState, useEffect } from 'react';
 import './std_dashboard_style.css';
 import InternshipList from '../../lists/internshipList.js';
-import AddInternshipForm from '../../forms/addinter.js';
-import Sidebar from '../../consts/sidebar.js';
-import TopBar from '../../consts/topbar.js';
 import Stats from './stats.js';
-import Certificates from '../internship/certificate_dashboard.js';
-import { db } from '../../loginsignup/firebase.jsx';
+import { firestore,auth} from '../../loginsignup/firebase.jsx';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { fetchInternshipsByStudentID } from '../../../services/internshipservice.js';
+
 const StudentDashboard = () => {
   const [activePage, setActivePage] = useState('MyInternships');
   const [internships, setInternships] = useState([]);
@@ -18,54 +15,46 @@ const StudentDashboard = () => {
     setActivePage(page);
   };
 
-  // Fetch Student Data and Internships Data
- 
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      const user = auth.currentUser; // Get current user
+      if (user) {
+        const studentDoc = await firestore.collection("students").doc(user.uid).get();
+        if (studentDoc.exists) {
+          setStudentInfo(studentDoc.data());
+        }
+      }
+    };
+    fetchStudentData();
+  }, []);
 
-useEffect(() => {
-  const fetchData = async () => {
-    const studentRef = collection(db, "students");
-    const studentSnapshot = await getDocs(studentRef);
-    const studentDoc = studentSnapshot.docs[0];
-    setStudentInfo(studentDoc.data());
+  useEffect(() => {
+    const fetchInternships = async () => {
+      const internshipsRef = collection(firestore, "internships");
+      const q = query(internshipsRef, where("studentID", "==", studentInfo?.studentID));
+      const querySnapshot = await getDocs(q);
+      setInternships(querySnapshot.docs.map(doc => doc.data()));
+    };
 
-    const studentID = studentDoc.id; 
-    const internshipsList = await fetchInternshipsByStudentID(studentID);
-    setInternships(internshipsList);
-  };
-
-  fetchData();
-}, []);
- // Empty dependency array to fetch data on mount
-   // Empty dependency array to fetch data on mount
+    if (studentInfo) {
+      fetchInternships();
+    }
+  }, [studentInfo]);
 
   return (
     <div className="dashboard">
-      <Sidebar handleNavigation={handleNavigation} />
       <div className="main-content">
-        <TopBar />
+        <h1>Welcome, {studentInfo?.username}</h1>
         <div className="content">
           {activePage === 'MyProfile' && studentInfo && (
             <>
-              <h1>Profile Details</h1>
+              <h2>Profile Details</h2>
               <p>Username: {studentInfo.username}</p>
               <p>Email: {studentInfo.email}</p>
-              <p>Role: {studentInfo.role}</p>
-              <p>Advisor: {studentInfo.advisorID}</p>
             </>
           )}
-          {activePage === 'MyInternships' && (
-            <>
-              <InternshipList internships={internships} />
-              <Stats studentID={studentInfo?.studentID} />
-
-
-              <Certificates />
-            </>
-          )}
-          {activePage === 'AddInternship' && <AddInternshipForm />}
+          {activePage === 'MyInternships' && <InternshipList internships={internships} />}
           {activePage === 'Stats' && <Stats />}
-          {activePage === 'Certificates' && <Certificates />}
-          {activePage === 'SignOut' && <h1>Signing Out...</h1>}
         </div>
       </div>
     </div>

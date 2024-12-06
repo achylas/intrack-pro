@@ -1,95 +1,89 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Sidebar, Menu, MenuItem, ProSidebarProvider } from 'react-pro-sidebar';
+import { useNavigate } from 'react-router-dom';
+import { FaTachometerAlt, FaHistory, FaFileAlt, FaCog, FaUser, FaCertificate } from 'react-icons/fa';
+import styled from 'styled-components'; // Import styled-components
 
-// Sidebar container
-const SidebarContainer = styled.div`
-  width: 250px;
-  background-color: #2f3b52;
-  color: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
-`;
+const SidebarComponent = () => {
+  const navigate = useNavigate();
 
-// User Profile section
-const UserProfile = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 40px;
-`;
+  const user = {
+    name: 'John Doe',
+    email: 'john.doe@example.com',
+    regNo: '123456',
+    image: 'https://via.placeholder.com/100', // Replace with actual image URL
+  };
 
-const ProfileImage = styled.img`
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 10px;
-`;
-
-const UserName = styled.div`
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 5px;
-`;
-
-const UserEmail = styled.div`
-  font-size: 14px;
-  color: #ccc;
-`;
-
-// Navigation Section
-const MenuSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-const MenuItem = styled(Link)`
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  font-size: 16px;
-  color: #ecf0f1;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s ease;
-
-  &:hover {
-    background-color: #34495e;
-  }
-
-  &.active {
-    background-color: #1a2637;
-  }
-`;
-
-const Sidebar = () => {
   return (
-    <SidebarContainer>
-      {/* User Profile */}
-      <UserProfile>
-        <ProfileImage src="https://www.w3schools.com/w3images/avatar2.png" alt="User" />
-        <UserName>John Doe</UserName>
-        <UserEmail>john.doe@example.com</UserEmail>
-      </UserProfile>
+    <ProSidebarProvider>
+      
+      <SidebarWrapper class="color">
+        {/* User Info Section */}
+        <UserInfo>
+          <img src={user.image} alt="User" />
+          <h3>{user.name}</h3>
+          <p>{user.email}</p>
+          <p>Reg No: {user.regNo}</p>
+        </UserInfo>
 
-      {/* Menu Items */}
-      <MenuSection>
-        <MenuItem to="/profile">Profile</MenuItem>
-        <MenuItem to="/settings">Settings</MenuItem>
-        <MenuItem to="/internship-history" className="active">
-          Internship History
-        </MenuItem>
-        <MenuItem to="/new-internship">New Internship</MenuItem>
-        <MenuItem to="/stats">Stats</MenuItem>
-        <MenuItem to="/certificates">Certificates</MenuItem>
-        <MenuItem to="/logout">Logout</MenuItem>
-      </MenuSection>
-    </SidebarContainer>
+        {/* Navigation Menu */}
+        
+        <Menu>
+          <MenuItem onClick={() => navigate('/dashboard')} icon={<FaTachometerAlt />}>
+            Dashboard
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/internship-history')} icon={<FaHistory />}>
+            Internship History
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/new-internship-form')} icon={<FaFileAlt />}>
+            New Internship Form
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/settings')} icon={<FaCog />}>
+            Settings
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/profile')} icon={<FaUser />}>
+            Profile
+          </MenuItem>
+          <MenuItem onClick={() => navigate('/my-certificates')} icon={<FaCertificate />}>
+            My Certificates
+          </MenuItem>
+        </Menu>
+      </SidebarWrapper>
+    </ProSidebarProvider>
   );
 };
 
-export default Sidebar;
+// Styled-components for styling the sidebar
+const SidebarWrapper = styled(Sidebar)`
+  height: 98vh;
+  background-color: pink ;
+`;
+
+const UserInfo = styled.div`
+  text-align: center;
+  padding: 20px;
+  .root{
+  background-color: #000080;
+  }
+  
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid #ffffff;
+  }
+
+  h3 {
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 14px;
+    color: #000080;
+  }
+`;
+
+export default SidebarComponent;

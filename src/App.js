@@ -4,16 +4,28 @@ import Login from './components/loginsignup/login';
 import StudentDashboard from './components/screens/student/std_dashbaord';  // Correct the path if needed
 import AdvDashboard from './components/screens/advisor/advDashboard'; // Correct path
 import AdminDashboard from './components/screens/admin/admin'; // Correct path
+import InternshipForm from './components/screens/internship/new_inter_form';
+import InternshipHistory from './components/lists/internshipList';
+import SidebarComponent from './components/consts/sidebar';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<StudentDashboard />} />  {/* This should render the Login component */}
-        <Route path="/student-dashboard" element={<StudentDashboard />} />
-        <Route path="/advisor-dashboard" element={<AdvDashboard />} />
-        <Route path="/admin-dashboard" element={<AdminDashboard />} />
-      </Routes>
+      <div style={{ display: 'flex' }}>
+        {/* Sidebar */}
+        <SidebarComponent />
+
+        {/* Main Content */}
+        <div style={{ flex: 1, padding: '20px' }}>
+          <Routes>
+            {/* Add the Login route as the first one */}
+            <Route path="/" element={<Login />} />
+            <Route path="/dashboard" element={<StudentDashboard />} />
+            <Route path="/internship-history" element={<InternshipHistory />} />
+            <Route path="/new-internship-form" element={<InternshipForm />} />
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 }
