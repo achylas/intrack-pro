@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"; 
 import { getAuth } from "firebase/auth"; 
-
+import { getStorage } from "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyCE1UgYdrXo1rltp73-0TJFHhR0OeSLLm0",
   authDomain: "intrack-pro.firebaseapp.com",
@@ -14,7 +14,8 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const firestore = getFirestore(app);
+const db = getFirestore(app);
 const auth = getAuth(app);
-
-export { auth, firestore };
+const firestore =getStorage(app);
+const storage = getStorage(app);
+export { auth, firestore , storage, db };

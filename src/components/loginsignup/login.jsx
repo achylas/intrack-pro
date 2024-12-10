@@ -1,6 +1,6 @@
 // Login.jsx (Modified to include the saving of student/advisor data)
 import React, { useState } from "react";
-import { auth, firestore } from "./firebase.jsx"; // Import Firestore
+import { auth, db } from "../auth/firebase.jsx"; // Import Firestore
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { FaEnvelope, FaLock, FaUserAlt } from 'react-icons/fa'; // Import icons
 import { useNavigate } from 'react-router-dom'; 
@@ -10,6 +10,7 @@ const Login = () => {
   const [action, setAction] = useState("Login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [regNo, setregNo]=useState("");
   const [username, setUsername] = useState(""); // For Sign Up
   const [role, setRole] = useState(""); // For Sign Up
   const [error, setError] = useState("");
@@ -36,11 +37,12 @@ const Login = () => {
           username: username,
           email: email,
           role: role,
+          regNo:regNo,
           createdAt: new Date(),
         };
   
         // Save user data in the corresponding collection
-        const userDoc = doc(firestore, role === "Student" ? "students" : "advisors", userCredential.user.uid);
+        const userDoc = doc(db, role === "Student" ? "students" : "advisors", userCredential.user.uid);
         await setDoc(userDoc, userData);
   
         // Navigate to the respective dashboard
@@ -57,13 +59,13 @@ const Login = () => {
         console.log("Logged In:", userCredential.user);
   
         // Check the role in the Firestore collection
-        const studentDocRef = doc(firestore, "students", userCredential.user.uid);
+        const studentDocRef = doc(db, "students", userCredential.user.uid);
         const studentDoc = await getDoc(studentDocRef);
   
         if (studentDoc.exists()) {
           navigate("/dashboard");
         } else {
-          const advisorDocRef = doc(firestore, "advisors", userCredential.user.uid);
+          const advisorDocRef = doc(db, "advisors", userCredential.user.uid);
           const advisorDoc = await getDoc(advisorDocRef);
   
           if (advisorDoc.exists()) {
@@ -107,6 +109,15 @@ const Login = () => {
             placeholder="Email ID"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <div className="input">
+          <FaEnvelope className="input-icon" />
+          <input
+            type="regNo"
+            placeholder="Registration No"
+            value={regNo}
+            onChange={(e) => setregNo(e.target.value)}
           />
         </div>
         <div className="input">

@@ -1,89 +1,89 @@
-/* Layout container */
-.wholepage {
-  display: flex; /* Ensures sidebar and form-content are side-by-side */
-  height: 100vh; /* Makes the container take full viewport height */
-  overflow: hidden; /* Prevents unnecessary scrolling */
-}
-
-/* Sidebar styles */
-.sidebar {
-  flex: 0 0 250px; /* Fixed width for the sidebar */
-  background-color: navy;
-  color: white;
-  height: 100%; /* Full height */
-  overflow-y: auto; /* Sidebar becomes scrollable if content overflows */
-}
-
-/* Form container */
 .form-container {
-  flex: 1; /* Form container takes up the remaining width */
-  max-width: none; /* Prevents restricting the width */
-  padding: 20px;
-  background: #f9f9f9;
-  overflow-y: auto; /* Form content becomes scrollable if it overflows */
-  height: 95%; /* Full height */
-  box-sizing: border-box; /* Ensures padding doesn't affect the layout */
+  background-color: #f9fafb;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* Heading styles */
 h2 {
-  text-align: center;
-  color: #333;
-  margin-bottom: 20px;
+  font-family: 'Arial', sans-serif;
 }
 
-/* Form grid layout */
-form {
+.form {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Two-column layout */
-  gap: 10px; /* Adds space between form fields */
-  max-width: 80%; /* Reduces the overall width of the form */
-  margin: 0 auto; /* Centers the form in the available space */
+  gap: 1rem;
 }
 
-/* Labels */
-label {
-  margin-bottom: 1px;
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-label {
+  font-size: 1rem;
   font-weight: bold;
-  grid-column: span 2; /* Default: labels span the full width */
+  color: #4a5568;
 }
 
-/* Inputs and select fields */
-input,
-select {
-  margin-top: 8px;
-  padding: 10px;
+.form-input,
+.file-input {
+  padding: 0.75rem;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 90%; /* Adjust width of the input fields */
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
 }
 
-/* File inputs */
-input[type="file"] {
-  padding: 0;
-  width: 80%; /* Adjust width of file input fields */
+.form-input:focus,
+.file-input:focus {
+  border-color: #4c6ef5;
+  outline: none;
 }
 
-/* Submit button */
-.buttonCont {
-  display: flex;             /* Enables Flexbox */
-  justify-content: center;   /* Horizontally centers the content */
-  align-items: center;       /* Vertically centers the content (if needed) */
-  width: 100%;               /* Ensures the container takes the full width */
-  margin-top: 20px; 
-  grid-column: span 2;       /* Ensures the button spans full width */
+.file-input {
+  padding: 0.75rem 0.5rem;
 }
 
-button {
-  padding: 10px;
-  background-color: #007bff;
+.submit-button {
+  background: linear-gradient(45deg, #4c6ef5, #3963a3);
   color: white;
+  padding: 1rem;
   border: none;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-size: 1.125rem;
   cursor: pointer;
-  display: inline-block;
+  transition: all 0.3s ease;
 }
 
-button:hover {
-  background-color: #0056b3;
+.submit-button:hover {
+  background: linear-gradient(45deg, #3963a3, #4c6ef5);
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.alert {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.alert-error {
+  background-color: #f8d7da;
+  color: #721c24;
 }

@@ -1,197 +1,185 @@
-import React, { useState } from 'react';
-import './internshipform.css'; // Ensure the CSS file includes the updated grid layout styles
-import Sidebar from '../../consts/sidebar';
-import TopBar from '../../consts/topbar';
+import React, { useState } from "react";
+import { collection, addDoc, doc, setDoc, getDoc, getDocs } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { db } from "../../auth/firebase";
+import { supabase } from "../../../supabaseClient";
+import "./internshipform.css";
 
-const InternshipForm = () => {
+const InternshipSubmissionForm = () => {
   const [formData, setFormData] = useState({
-    name: '',
-    regNo: '',
-    semester: '',
-    program: '',
-    department: '',
-    title: '',
-    company: '',
-    duration: '',
-    evaluationForm: null,
-    taskDetails: null,
-    proofImages: [],
+    name: "",
+    email: "",
+    regNo: "",
+    companyName: "",
+    duration: "",
+    creditHours: "",
   });
-  const handleNavigation = (page) => {
-    setActivePage(page);
-  };
-  const [activePage, setActivePage] = useState('MyInternships');
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e) => {
-    const { name, files } = e.target;
-    if (name === 'proofImages') {
-      setFormData({ ...formData, [name]: Array.from(files) });
+    if (e.target.files && e.target.files[0].type === "application/pdf") {
+      setFile(e.target.files[0]);
     } else {
-      setFormData({ ...formData, [name]: files[0] });
+      setError("Please upload a valid PDF file.");
     }
   };
 
-  const handleSubmit = (e) => {
+  const uploadFile = async (file) => {
+    const fileName = `${formData.regNo}-${Date.now()}.pdf`;
+    const { data, error } = await supabase.storage
+      .from('evaluation-forms')
+      .upload(fileName, file);
+
+    if (error) {
+      throw new Error('Error uploading file: ' + error.message);
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('evaluation-forms')
+      .getPublicUrl(fileName);
+
+    return publicUrl;
+  };
+
+  const saveToFirestore = async (downloadURL) => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      throw new Error("User not logged in.");
+    }
+
+    const internshipsRef = collection(db, "Internships");
+    const querySnapshot = await getDocs(internshipsRef);
+
+    let summerDocId = null;
+
+    querySnapshot.forEach((doc) => {
+      if (doc.data().internshipType === "summer") {
+        summerDocId = doc.id;
+      }
+    });
+
+    if (!summerDocId) {
+      throw new Error("No internship document found for 'summer'.");
+    }
+
+    const studentDocRef = doc(db, "Internships", summerDocId, "students", formData.regNo);
+    await setDoc(studentDocRef, {
+      ...formData,
+      evaluationFormURL: downloadURL,
+      timestamp: new Date(),
+      status: "pending",
+    });
+
+    const userDocRef = doc(db, "students", user.uid);
+    const internshipsSubCollectionRef = collection(userDocRef, "internships");
+    await addDoc(internshipsSubCollectionRef, {
+      ...formData,
+      internshipType: "summer",
+      evaluationFormURL: downloadURL,
+      timestamp: new Date(),
+      status: "pending",
+    });
+
+    return studentDocRef;
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Data:', formData);
-    alert('Form submitted (UI-only, no database attached yet).');
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      if (!file) {
+        throw new Error("Evaluation form is required.");
+      }
+
+      const downloadURL = await uploadFile(file);
+      await saveToFirestore(downloadURL);
+
+      setSuccess(true);
+      setFormData({
+        name: "",
+        email: "",
+        regNo: "",
+        companyName: "",
+        duration: "",
+        creditHours: "",
+      });
+      setFile(null);
+    } catch (err) {
+      setError(err.message || "An unexpected error occurred.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-      
-  <div className="wholepage">
-    <div className="form-container">
-    <TopBar />
-      <h2>Internship Submission Form</h2>
-      <form onSubmit={handleSubmit}>
-        {/* Name and Registration Number */}
-        <div>
-          <label>Name:</label> <br />
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-          />
+    <section className="form-container">
+      <h2 className="text-3xl font-bold text-center text-indigo-700 mb-6">Internship Submission Form</h2>
+      {success && (
+        <div className="alert alert-success">
+          Internship details submitted successfully!
         </div>
-        <div>
-          <label>Registration Number:</label> <br />
-          <input
-            type="text"
-            name="regNo"
-            value={formData.regNo}
-            onChange={handleInputChange}
-            required
-          />
+      )}
+      {error && (
+        <div className="alert alert-error">
+          {error}
         </div>
-
-        {/* Semester and Program */}
-        <div>
-          <label>Semester:</label> <br />
-          <select
-            name="semester"
-            value={formData.semester}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Select Semester</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-          </select>
-        </div>
-        <div>
-          <label>Program:</label> <br />
-          <input
-            type="text"
-            name="program"
-            value={formData.program}
-            onChange={handleInputChange}
-            required
-          />
+      )}
+      <form onSubmit={handleSubmit} className="form">
+        <div className="form-grid">
+          {Object.keys(formData).map((field) => (
+            <div key={field} className="form-group">
+              <label htmlFor={field} className="form-label">
+                {field.replace(/([A-Z])/g, " $1").toUpperCase()}
+              </label>
+              <input
+                type="text"
+                id={field}
+                name={field}
+                value={formData[field]}
+                onChange={handleInputChange}
+                required
+                className="form-input"
+              />
+            </div>
+          ))}
         </div>
 
-        {/* Department and Internship Title */}
-        <div>
-          <label>Department:</label> <br />
-          <input
-            type="text"
-            name="department"
-            value={formData.department}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Internship Title:</label> <br />
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-
-        {/* Company Name and Internship Duration */}
-        <div>
-          <label>Company Name:</label> <br />
-          <input
-            type="text"
-            name="company"
-            value={formData.company}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Internship Duration:</label> <br />
-          <input
-            type="text"
-            name="duration"
-            value={formData.duration}
-            onChange={handleInputChange}
-            placeholder="e.g., 6 weeks"
-            required
-          />
-        </div>
-
-        {/* Upload Evaluation Form */}
-        <div>
-          <label>Upload Evaluation Form:</label> <br />
+        <div className="form-group">
+          <label htmlFor="evaluationForm" className="form-label">
+            Evaluation Form (PDF)
+          </label>
           <input
             type="file"
-            name="evaluationForm"
+            id="evaluationForm"
+            accept=".pdf"
             onChange={handleFileChange}
-            required
+            className="file-input"
           />
         </div>
 
-        {/* Upload Task Details */}
-        <div>
-          <label>Upload Task Details:</label> <br />
-          <input
-            type="file"
-            name="taskDetails"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-
-        {/* Upload Proof Images */}
-        <div>
-          <label>Upload Proof Images:</label> <br />
-          <input
-            type="file"
-            name="proofImages"
-            onChange={handleFileChange}
-            accept="image/*"
-            multiple
-            required
-          />
-        </div> <br /> <br />
-
-        {/* Submit Button */}
-
-<div className="buttonCont">
-  <button type="submit">Submit</button>
-</div>
-
-       
+        <button
+          type="submit"
+          disabled={loading}
+          className="submit-button"
+        >
+          {loading ? "Submitting..." : "Submit"}
+        </button>
       </form>
-    </div>
-    </div>
+    </section>
   );
 };
 
-export default InternshipForm;
+export default InternshipSubmissionForm;

@@ -1,60 +1,33 @@
-// StudentDashboard.jsx
-import React, { useState, useEffect } from 'react';
-import './std_dashboard_style.css';
-import InternshipList from '../../lists/internshipList.js';
-import Stats from './stats.js';
-import { firestore,auth} from '../../loginsignup/firebase.jsx';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import "./std_dashboard_style.css";
+import { FaBriefcase, FaUser, FaPlusCircle } from "react-icons/fa"; // Importing icons for better visuals
 
 const StudentDashboard = () => {
-  const [activePage, setActivePage] = useState('MyInternships');
-  const [internships, setInternships] = useState([]);
-  const [studentInfo, setStudentInfo] = useState(null);
+  const navigate = useNavigate();
 
-  const handleNavigation = (page) => {
-    setActivePage(page);
+  const handleNavigation = (path) => {
+    navigate(path);
   };
 
-  useEffect(() => {
-    const fetchStudentData = async () => {
-      const user = auth.currentUser; // Get current user
-      if (user) {
-        const studentDoc = await firestore.collection("students").doc(user.uid).get();
-        if (studentDoc.exists) {
-          setStudentInfo(studentDoc.data());
-        }
-      }
-    };
-    fetchStudentData();
-  }, []);
-
-  useEffect(() => {
-    const fetchInternships = async () => {
-      const internshipsRef = collection(firestore, "internships");
-      const q = query(internshipsRef, where("studentID", "==", studentInfo?.studentID));
-      const querySnapshot = await getDocs(q);
-      setInternships(querySnapshot.docs.map(doc => doc.data()));
-    };
-
-    if (studentInfo) {
-      fetchInternships();
-    }
-  }, [studentInfo]);
-
   return (
-    <div className="dashboard">
-      <div className="main-content">
-        <h1>Welcome, {studentInfo?.username}</h1>
-        <div className="content">
-          {activePage === 'MyProfile' && studentInfo && (
-            <>
-              <h2>Profile Details</h2>
-              <p>Username: {studentInfo.username}</p>
-              <p>Email: {studentInfo.email}</p>
-            </>
-          )}
-          {activePage === 'MyInternships' && <InternshipList internships={internships} />}
-          {activePage === 'Stats' && <Stats />}
+    <div className="dashboard-container">
+      <h1 className="dashboard-title">Student Dashboard</h1>
+      <div className="dashboard-cards">
+        <div className="dashboard-card" onClick={() => handleNavigation("/internship-history")}>
+          <FaBriefcase className="dashboard-icon" />
+          <h2>My Internships</h2>
+          <p>View your internship history and progress.</p>
+        </div>
+        <div className="dashboard-card" onClick={() => handleNavigation("/new-internship-form")}>
+          <FaPlusCircle className="dashboard-icon" />
+          <h2>New Internship Form</h2>
+          <p>Submit your application for a new internship.</p>
+        </div>
+        <div className="dashboard-card" onClick={() => handleNavigation("/profile")}>
+          <FaUser className="dashboard-icon" />
+          <h2>Profile</h2>
+          <p>Edit and update your personal information.</p>
         </div>
       </div>
     </div>
